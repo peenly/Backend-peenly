@@ -1,0 +1,44 @@
+# Node modules directory
+/node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.*   # If you have environment-specific files like .env.production, .env.development, etc.
+
+# Build output
+/dist/
+/build/
+
+# Dependency directories for specific package managers
+/package-lock.json
+/yarn.lock
+/pnpm-lock.yaml
+
+# Mac system files
+.DS_Store
+
+# IDE or editor directories and files
+.vscode/
+.idea/
+
+# Operating system files
+Thumbs.db
+Desktop.ini
+
+# Coverage directory for test results
+/coverage/
+
+# Miscellaneous
+*.tgz
+*.gz
+
+# Ignore test data
+*.test.js
+*.spec.js
