@@ -61,7 +61,7 @@ app.listen(3001, (req, res)=>{
 
 
 
-mongoose.connect("mongodb+srv://innocentgideon10:3ZLvA0eOOuBt6bYJ@raven.rfyzjjk.mongodb.net/?retryWrites=true&w=majority&appName=Raven")
+mongoose.connect("mongodb+srv://peenly:peen2024@cluster0.k87ta.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 .then(()=>{
     console.log("Connection Successful")
 
