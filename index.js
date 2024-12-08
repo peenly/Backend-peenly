@@ -1,5 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+dotenv.config();
 const userRouter = require('./routes/User.Routes.js')
 const cors = require('cors')
 const app = express()
@@ -7,7 +9,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}))
 app.use(cors())
 // const usermod = require('./models/User.Model.js')
-
 
 
 app.get('/', (req, res)=>{
@@ -19,6 +20,7 @@ app.get('/', (req, res)=>{
 
 app.use('/api/user/register', userRouter)
 app.use('/api/book/login', userRouter)
+app.use('/api/user/forgot-password', userRouter)
 
 
 // app.post('/login', async (req, res)=>{
@@ -59,7 +61,7 @@ app.listen(3001, (req, res)=>{
 
 
 
-mongoose.connect("mongodb+srv://peenly:peen2024@cluster0.k87ta.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect("mongodb+srv://innocentgideon10:3ZLvA0eOOuBt6bYJ@raven.rfyzjjk.mongodb.net/?retryWrites=true&w=majority&appName=Raven")
 .then(()=>{
     console.log("Connection Successful")
 
