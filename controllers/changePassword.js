@@ -1,9 +1,94 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     user:
+ *       type: object
+ *       required:
+ *         - fullname
+ *         - email
+ *         - dateOfBirth
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the book
+ *         fullname:
+ *           type: string
+ *           description: The fulname of the user
+ *         email:
+ *           type: string
+ *           description: The email address of the book
+ *         dateOfBirth:
+ *           type: Date
+ *           description: The User date of birth 
+ *       example:
+ *         id: d5fE_asz
+ *         fullname: The New Turing Omnibus
+ *         author: Alexander K. Dewdney
+ *         finished: false
+ *         createdAt: 2020-03-10T04:05:06.157Z
+ */
+ 
+
 const usermod = require('../models/User.Model');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * @swagger
+ * /api/user/forgot-password/send-reset-token:
+ *   post:
+ *     summary: Send a password reset email to the user.
+ *     tags:
+ *       - user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset email sent successfully
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Failed to send email or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
 
 const sendResetToken = async (req, res) => {
     const email = req.body.email;
@@ -111,6 +196,68 @@ const sendMail = async (transporter, mailOptions) => {
 
 // Todo: Generate a reset Expiration Token Method
 
+/**
+ * @swagger
+ * /api/user/forgot-password/reset-password/{email}:
+ *   put:
+ *     summary: Reset the user's password.
+ *     tags:
+ *       - user
+ *     parameters:
+ *       - in: path
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The email address of the user resetting the password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: newPassword123
+ *               confirmedPassword:
+ *                 type: string
+ *                 example: newPassword123
+ *     responses:
+ *       200:
+ *         description: Password reset successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: 1234567890abcdef
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *       400:
+ *         description: Bad request, e.g., passwords do not match.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Passwords do not match
+ *       500:
+ *         description: Failed to fetch user or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to fetch user
+ */
 
 const resetPassword = async (req, res) => {
     const {newPassword, confirmedPassword} = req.body

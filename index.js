@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
+const {swaggerDocs, swaggerUi} = require('./swagger.js')
 dotenv.config();
 const userRouter = require('./routes/User.Routes.js')
 const cors = require('cors')
@@ -15,7 +16,9 @@ app.get('/', (req, res)=>{
     res.send("Welcome to Backend")
 })
 
-
+app.use('/api-docs', swaggerUi.serve, 
+    swaggerUi.setup(swaggerDocs, {explorer: true})
+);
 
 
 app.use('/api/user/register', userRouter)

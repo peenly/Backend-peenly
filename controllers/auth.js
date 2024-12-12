@@ -1,6 +1,62 @@
 const usermod = require('../models/User.Model');
 const bcrypt = require('bcrypt');
 
+/**
+ * @swagger
+ * /api/user/register/login:
+ *   post:
+ *     summary: login user.
+ *     tags:
+ *       - user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: "abc123"
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 
+ *       500:
+ *         description: uanble to send in or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
+
 // User Signin Function
 const signin = async (req, res) => {
     try {
@@ -24,6 +80,65 @@ const signin = async (req, res) => {
     }
 };
 
+
+/**
+ * @swagger
+ * /api/user/register/:
+ *   post:
+ *     summary: create user.
+ *     tags:
+ *       - user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullname:
+ *                 type: string
+ *                 example: fullname
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: "abc123"
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 
+ *       500:
+ *         description: uanble to send in or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
 // User Signup Function
 const signup = async (req, res) => {
     try {
