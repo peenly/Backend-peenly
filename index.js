@@ -24,6 +24,7 @@ app.use('/api-docs', swaggerUi.serve,
 app.use('/api/user/register', userRouter)
 app.use('/api/book/login', userRouter)
 app.use('/api/user/forgot-password', userRouter)
+app.use('/api/user/otp', userRouter)
 
 
 // app.post('/login', async (req, res)=>{
