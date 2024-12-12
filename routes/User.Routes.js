@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const {signup, signin} = require('../controllers/auth')
+const {signup, signin, validateOtp} = require('../controllers/auth')
 const { sendResetToken, resetPassword } = require('../controllers/changePassword')
 
 /**
@@ -43,5 +43,6 @@ router.post('/', signup)
 router.post('/login', signin)
 router.post('/send-reset-token', sendResetToken )
 router.post('/reset-password', resetPassword )
+router.post('/validate', validateOtp);
 
 module.exports = router

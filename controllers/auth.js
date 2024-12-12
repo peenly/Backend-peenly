@@ -1,5 +1,6 @@
 const usermod = require('../models/User.Model');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 /**
  * @swagger
@@ -83,7 +84,7 @@ const signin = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/register/:
+ * /api/user/register:
  *   post:
  *     summary: create user.
  *     tags:
@@ -160,12 +161,40 @@ const signup = async (req, res) => {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
         // Create the user with the hashed password
         const userReg = await usermod.create({
             fullname,
             email,
             password: hashedPassword,
+            otpCode: otp,
         });
+
+
+    // Configure nodemailer
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Your OTP for Peenly Login',
+        text: `Your OTP is ${otp}`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: 'OTP sent successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to send OTP', error });
+    }
+
 
         res.status(201).json({ message: 'User registered successfully', user: userReg });
     } catch (error) {
@@ -173,7 +202,89 @@ const signup = async (req, res) => {
     }
 };
 
+/**
+ * @swagger
+ * /api/user/otp/validate:
+ *   post:
+ *     summary: validate user otp.
+ *     tags:
+ *       - user
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The email address of the user resetting the password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               otp:
+ *                 type: string
+ *                 example: 000000
+ *     responses:
+ *       200:
+ *         description: User registered successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 
+ *                 email:
+ *                   type: string
+ *                   example: User registered successfully
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 
+ *       500:
+ *         description: uanble to send in or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
+// Validate OTP
+const validateOtp = async (req, res) => {
+    const {otp}  = req.body;
+
+    //get the email from the quury parameter
+    const {email} = req.query;
+
+    // Check if the user exists
+    const existingUser = await usermod.findOne({ email });
+    if (!existingUser) {
+        return res.status(409).json({ message: 'user does not exist' });
+    }
+
+    if (existingUser.otpCode === otp) {
+        //delete otpStore[email]; 
+        res.status(200).json({ message: 'OTP validated successfully' });
+    } else {
+        res.status(400).json({ message: 'Invalid OTP' });
+    }
+};
+
+
 module.exports = {
     signin,
     signup,
+    validateOtp,
 };

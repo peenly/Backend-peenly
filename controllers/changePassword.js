@@ -198,13 +198,13 @@ const sendMail = async (transporter, mailOptions) => {
 
 /**
  * @swagger
- * /api/user/forgot-password/reset-password/{email}:
- *   put:
+ * /api/user/forgot-password/reset-password:
+ *   post:
  *     summary: Reset the user's password.
  *     tags:
  *       - user
  *     parameters:
- *       - in: path
+ *       - in: query
  *         name: email
  *         required: true
  *         schema:
@@ -279,6 +279,9 @@ const resetPassword = async (req, res) => {
     } catch (error) {
         console.error('Error fetching user:', error);
         return res.status(500).json({ error: 'Failed to fetch user' }) 
+    }
+    if(!user) {
+        return res.status(500).json({ error: 'user does not exist' }) 
     }
 
     // Hash the password
