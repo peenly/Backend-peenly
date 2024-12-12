@@ -198,7 +198,7 @@ const sendMail = async (transporter, mailOptions) => {
 
 /**
  * @swagger
- * /api/user/forgot-password/reset-password{email}:
+ * /api/user/forgot-password/reset-password/{email}:
  *   put:
  *     summary: Reset the user's password.
  *     tags:
