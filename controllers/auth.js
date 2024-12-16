@@ -1,6 +1,7 @@
 const usermod = require('../models/User.Model');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const otpStore = {}
 
 /**
  * @swagger
@@ -78,6 +79,94 @@ const signin = async (req, res) => {
         res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+
+/**
+ * @swagger
+ * /api/user/otp/send-otp:
+ *   post:
+ *     summary: Send an OTP to the user's email.
+ *     tags:
+ *       - user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP sent successfully
+ *       400:
+ *         description: Bad request, email is required.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email is required
+ *       500:
+ *         description: Failed to send OTP or other server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send OTP
+ *                 error:
+ *                   type: string
+ *                   example: Error details here
+ */
+
+
+
+// Function to send OTP
+const sendOtp = async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email] = otp; // Store OTP temporarily
+
+    // Configure nodemailer
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Your OTP for Peenly Login',
+        text: `Your OTP is ${otp}`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: 'OTP sent successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to send OTP', error });
     }
 };
 
@@ -176,8 +265,8 @@ const signup = async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD,
         },
     });
 
@@ -287,4 +376,5 @@ module.exports = {
     signin,
     signup,
     validateOtp,
+    sendOtp,
 };
