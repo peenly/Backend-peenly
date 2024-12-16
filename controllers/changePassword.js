@@ -33,7 +33,7 @@
 
 const usermod = require('../models/User.Model');
 const nodemailer = require('nodemailer');
-const bcrypt = require('bcrypt.js');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 
