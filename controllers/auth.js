@@ -22,7 +22,7 @@ const signin = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 // User Signup Function
 const signup = async (req, res) => {
@@ -56,7 +56,7 @@ const signup = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+}
 
 module.exports = {
     signin,

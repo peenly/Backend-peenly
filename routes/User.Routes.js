@@ -4,7 +4,11 @@ const router = express.Router()
 const {signup, signin} = require('../controllers/auth')
 
 
-router.post('/', signup)
-router.post('/', signin)
+
+
+router.post('/api/signup', signup)
+router.post('/api/signin', signin)
+
+
 
 module.exports = router
