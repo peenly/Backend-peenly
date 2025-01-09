@@ -7,7 +7,60 @@ const nodemailer = require('nodemailer');
 const otpStore = {}
 const Africastalking = require('africastalking');
 
-
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: user@example.com
+ *         password:
+ *           type: string
+ *           example: "abc123"
+ *         first_name:
+ *           type: string
+ *           example: John
+ *         last_name:
+ *           type: string
+ *           example: Doe
+ *         dateOfBirth:
+ *           type: string
+ *           format: date
+ *           example: 1990-01-01
+ *         otpCode:
+ *           type: string
+ *           example: "123456"
+ *         resetToken:
+ *           type: string
+ *           example: "resetToken12345"
+ *         resetTokenExpiration:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-01-01T12:00:00Z"
+ *         mfaEnabled:
+ *           type: boolean
+ *           example: true
+ *         children:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 example: "60f7b441bc13b12b73136c0f"
+ *               first_name:
+ *                 type: string
+ *                 example: Jane
+ *               last_name:
+ *                 type: string
+ *                 example: Doe
+ *       required:
+ *         - email
+ *         - password
+ */
 
 /**
  * @swagger
