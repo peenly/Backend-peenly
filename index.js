@@ -4,7 +4,7 @@ const dotenv = require('dotenv')
 const {swaggerDocs, swaggerUi} = require('./swagger.js')
 dotenv.config();
 const userRouter = require('./routes/User.Routes.js')
-const ChildRouter = require('./routes/Child.Routes.js')
+// const ChildRouter = require('./routes/Child.Routes.js')
 const cors = require('cors')
 const app = express()
 app.use(express.json());
@@ -22,17 +22,13 @@ app.use('/api-docs', swaggerUi.serve,
 );
 
 
-<<<<<<< HEAD
 app.use('/api/user/register', userRouter)
 app.use('/api/book/login', userRouter)
 app.use('/api/user/forgot-password', userRouter)
 app.use('/api/user/otp', userRouter)
-=======
-app.post('/api/signin', userRouter)
-app.post('/api/signup', userRouter)
 
-app.post('/api/child', ChildRouter)
->>>>>>> e93c86f5820fd335d5d3957f622898844c0c39c9
+
+// app.post('/api/child', ChildRouter)
 
 
 
