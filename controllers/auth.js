@@ -229,7 +229,7 @@ const sendOtp = async (req, res) => {
  * @swagger
  * /api/user/register:
  *   post:
- *     summary: create user.
+ *     summary: Register a new user.
  *     tags:
  *       - user
  *     requestBody:
@@ -239,9 +239,12 @@ const sendOtp = async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               fullname:
+ *               first_name:
  *                 type: string
- *                 example: fullname
+ *                 example: John
+ *               last_name:
+ *                 type: string
+ *                 example: Doe
  *               email:
  *                 type: string
  *                 example: user@example.com
@@ -250,7 +253,7 @@ const sendOtp = async (req, res) => {
  *                 example: "abc123"
  *     responses:
  *       200:
- *         description: Password reset email sent successfully.
+ *         description: User registered successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -258,31 +261,39 @@ const sendOtp = async (req, res) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 
- *                 email:
- *                   type: string
- *                   example: user@example.com
- *       404:
- *         description: User not found.
+ *                   example: User registered successfully.
+ *       400:
+ *         description: Missing required fields or invalid data.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 message:
  *                   type: string
- *                   example: 
+ *                   example: All fields are required.
+ *       409:
+ *         description: Email already in use.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email already in use.
  *       500:
- *         description: uanble to send in or other server error.
+ *         description: Server error.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 message:
  *                   type: string
- *                   example: Failed to send email
+ *                   example: Failed to register user.
  */
+
 // User Signup Function
 const signup = async (req, res) => {
     try {
