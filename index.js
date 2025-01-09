@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const {swaggerDocs, swaggerUi} = require('./swagger.js')
 dotenv.config();
 const userRouter = require('./routes/User.Routes.js')
+const ChildRouter = require('./routes/Child.Routes.js')
 const cors = require('cors')
 const app = express()
 app.use(express.json());
@@ -21,36 +22,20 @@ app.use('/api-docs', swaggerUi.serve,
 );
 
 
+<<<<<<< HEAD
 app.use('/api/user/register', userRouter)
 app.use('/api/book/login', userRouter)
 app.use('/api/user/forgot-password', userRouter)
 app.use('/api/user/otp', userRouter)
+=======
+app.post('/api/signin', userRouter)
+app.post('/api/signup', userRouter)
+
+app.post('/api/child', ChildRouter)
+>>>>>>> e93c86f5820fd335d5d3957f622898844c0c39c9
 
 
-// app.post('/login', async (req, res)=>{
-//     try {
 
-//         const {email, password} = req.body
-//         usermod.findOne({email: email})
-//             .then(user=>{
-//                 if(user){
-//                     if(user.password === password){
-//                         res.json("Login Successful")
-//                     }else{
-//                         res.json("password incorrect")
-//                     }
-//                 }else{
-//                     res.json("No record found")
-//                 }
-//             })
-        
-        
-//     } catch (error) {
-
-//         res.status(500).json({message: error.message})
-        
-//     }
-// })
 
 
 

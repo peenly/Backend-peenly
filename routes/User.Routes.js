@@ -39,11 +39,20 @@ const { sendResetToken, resetPassword } = require('../controllers/changePassword
  *         createdAt: 2020-03-10T04:05:06.157Z
  */
 
+<<<<<<< HEAD
 router.post('/', signup)
 router.post('/login', signin)
 router.post('/send-reset-token', sendResetToken )
 router.post('/reset-password', resetPassword )
 router.post('/validate', validateOtp);
 router.post('/send-otp', sendOtp);
+=======
+
+
+router.post('/api/signup', signup)
+router.post('/api/signin', signin)
+
+
+>>>>>>> e93c86f5820fd335d5d3957f622898844c0c39c9
 
 module.exports = router
