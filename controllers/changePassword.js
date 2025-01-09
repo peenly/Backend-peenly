@@ -2,32 +2,55 @@
  * @swagger
  * components:
  *   schemas:
- *     user:
+ *     User:
  *       type: object
- *       required:
- *         - fullname
- *         - email
- *         - dateOfBirth
- *         - password
  *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the book
- *         fullname:
- *           type: string
- *           description: The fulname of the user
  *         email:
  *           type: string
- *           description: The email address of the book
+ *           example: user@example.com
+ *         password:
+ *           type: string
+ *           example: "abc123"
+ *         first_name:
+ *           type: string
+ *           example: John
+ *         last_name:
+ *           type: string
+ *           example: Doe
  *         dateOfBirth:
- *           type: Date
- *           description: The User date of birth 
- *       example:
- *         id: d5fE_asz
- *         fullname: The New Turing Omnibus
- *         author: Alexander K. Dewdney
- *         finished: false
- *         createdAt: 2020-03-10T04:05:06.157Z
+ *           type: string
+ *           format: date
+ *           example: 1990-01-01
+ *         otpCode:
+ *           type: string
+ *           example: "123456"
+ *         resetToken:
+ *           type: string
+ *           example: "resetToken12345"
+ *         resetTokenExpiration:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-01-01T12:00:00Z"
+ *         mfaEnabled:
+ *           type: boolean
+ *           example: true
+ *         children:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 example: "60f7b441bc13b12b73136c0f"
+ *               first_name:
+ *                 type: string
+ *                 example: Jane
+ *               last_name:
+ *                 type: string
+ *                 example: Doe
+ *       required:
+ *         - email
+ *         - password
  */
  
 
