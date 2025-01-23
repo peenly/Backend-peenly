@@ -7,7 +7,9 @@ const childProfileSchema = new mongoose.Schema({
     name: String,
     age: Number,
     guardianId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    privacy: { type: String, enum: ['private', 'public'], default: 'private' },
+    privacy: { type: String, enum: ['public', 'private'], default: 'private' },
+    achievements: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Achievement' }],
+    milestones: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Milestone' }],
 
   },
     {

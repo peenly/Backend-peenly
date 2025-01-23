@@ -360,7 +360,7 @@ const validateOtp = async (req, res) => {
     // Check if the user exists
     const existingUser = await usermod.findOne({ email });
     if (!existingUser) {
-        return res.status(409).json({ message: 'user does not exist' });
+        return res.status(409).json({ message: 'User does not exist' });
     }
 
     if (existingUser.otpCode === otp) {
