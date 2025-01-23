@@ -4,6 +4,7 @@ const UserSchema = new mongoose.Schema({
 
     
 
+
     
     otpCode: { type: String, required: false},
 
@@ -15,6 +16,18 @@ const UserSchema = new mongoose.Schema({
     children: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ChildProfile' }], // Reference to child profiles
     guardians: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     
+
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    first_name: { type: String, required: false },
+    last_name: { type: String, required: false },
+    dateOfBirth: { type: Date, required: false },
+    otpCode: { type: String, required: false},
+    resetToken: String,
+    resetTokenExpiration: Date,
+    mfaEnabled: { type: Boolean, default: false },
+    children: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ChildProfile' }], 
+
     
 },
     {

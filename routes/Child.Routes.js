@@ -1,3 +1,4 @@
+
 const express = require('express')
 const router = express.Router()
 
@@ -43,3 +44,17 @@ router.delete('/delete', async (req, res) => {
 
 
 module.exports = router
+
+// const express = require('express')
+// const router = express.Router()
+
+
+// const { ChildAuth } = require('../controllers/Child.Auth')
+
+
+
+// router.post('/api/child', ChildAuth)
+
+
+// module.exports = router
+

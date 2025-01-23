@@ -4,12 +4,16 @@ const dotenv = require('dotenv')
 const {swaggerDocs, swaggerUi} = require('./swagger.js')
 dotenv.config();
 const userRouter = require('./routes/User.Routes.js')
+<<<<<<< HEAD
 const ChildRouter = require('./routes/Child.Routes.js')
 const guardian = require('./routes/guardian.Routes.js')
 const privacy = require('./routes/guardian.Routes.js')
 const Achievement = require('./routes/Achievement.js')
 const Milestone = require ('./routes/milestone.js')
 const dashboard = require('./routes/dashboard.js')
+=======
+// const ChildRouter = require('./routes/Child.Routes.js')
+>>>>>>> origin/main
 const cors = require('cors')
 const app = express()
 app.use(express.json());
@@ -35,6 +39,7 @@ app.use('/api/user/otp', userRouter)
 app.post('/api/signin', userRouter)
 app.post('/api/signup', userRouter),
 
+<<<<<<< HEAD
 app.post('/api/child', ChildRouter)
 app.put('api/update', ChildRouter)
 app.delete('api/delete', ChildRouter)
@@ -55,6 +60,12 @@ app.delete('api/delete-guardian', guardian)
 
 app.put('api/privacy', privacy)
 app.get('api/privacy-childId', privacy)
+=======
+// app.post('/api/child', ChildRouter)
+
+
+
+>>>>>>> origin/main
 
 
 
