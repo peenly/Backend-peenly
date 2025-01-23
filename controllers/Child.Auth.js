@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Create child profile
 const child = require('../models/Child.model');
 
@@ -28,7 +27,6 @@ const ChildAuth = async (req, res) => {
   module.exports = {
     ChildAuth
   };
-=======
 // // Create child profile
 // const child = require('../models/Child.model');
 
@@ -147,4 +145,3 @@ const ChildAuth = async (req, res) => {
 // module.exports = {
 //   ChildAuth,
 // };
->>>>>>> origin/main

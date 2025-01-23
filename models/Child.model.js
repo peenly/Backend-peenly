@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const mongoose = require('mongoose')
 
 
@@ -21,7 +20,6 @@ const childProfileSchema = new mongoose.Schema({
   
   const ChildProfile = mongoose.model('ChildProfile', childProfileSchema);
   module.exports = ChildProfile;
-=======
 // const mongoose = require('mongoose')
 
 
@@ -42,4 +40,3 @@ const childProfileSchema = new mongoose.Schema({
   
 //   const ChildProfile = mongoose.model('ChildProfile', childProfileSchema);
 //   module.exports = ChildProfile;
->>>>>>> origin/main

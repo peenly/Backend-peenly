@@ -410,12 +410,6 @@ const signup = async (req, res) => {
         console.error('Error during signup:', error);
         res.status(500).json({ message: 'Failed to sign up and send OTP', error: error.message });
     }
-}
-
-        res.status(201).json({ message: 'User registered successfully', user: userReg });
-    } catch(error) {
-        res.status(500).json({ message: error.message });
-    }
 };
 
 /**

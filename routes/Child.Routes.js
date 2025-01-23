@@ -1,14 +1,84 @@
+const express = require('express');
+const router = express.Router();
+const { ChildAuth } = require('../controllers/Child.Auth');
 
-const express = require('express')
-const router = express.Router()
+/**
+ * @swagger
+ * /api/child:
+ *   post:
+ *     summary: Create a child profile.
+ *     tags:
+ *       - Child
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               age:
+ *                 type: integer
+ *                 example: 8
+ *               privacy:
+ *                 type: string
+ *                 enum: [public, private]
+ *                 example: private
+ *     responses:
+ *       201:
+ *         description: Child profile created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Child profile created successfully
+ *                 childProfile:
+ *                   type: object
+ *       400:
+ *         description: Missing required fields.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/api/child', ChildAuth);
 
-
-const { ChildAuth } = require('../controllers/Child.Auth')
-
-
-
-router.post('/api/child', ChildAuth)
-
+/**
+ * @swagger
+ * /update:
+ *   put:
+ *     summary: Update a child profile.
+ *     tags:
+ *       - Child
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               childId:
+ *                 type: string
+ *                 example: 63c9e5b5f5a48e1c4e7e3d89
+ *               name:
+ *                 type: string
+ *                 example: John Doe Updated
+ *               age:
+ *                 type: integer
+ *                 example: 9
+ *     responses:
+ *       200:
+ *         description: Child profile updated successfully.
+ *       404:
+ *         description: Child profile not found.
+ *       500:
+ *         description: Error updating child profile.
+ */
 router.put('/update', async (req, res) => {
     const { childId, name, age } = req.body;
 
@@ -25,6 +95,31 @@ router.put('/update', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /delete:
+ *   delete:
+ *     summary: Delete a child profile.
+ *     tags:
+ *       - Child
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               childId:
+ *                 type: string
+ *                 example: 63c9e5b5f5a48e1c4e7e3d89
+ *     responses:
+ *       200:
+ *         description: Child profile deleted successfully.
+ *       404:
+ *         description: Child profile not found.
+ *       500:
+ *         description: Error deleting child profile.
+ */
 router.delete('/delete', async (req, res) => {
     const { childId } = req.body;
 
@@ -41,20 +136,4 @@ router.delete('/delete', async (req, res) => {
     }
 });
 
-
-
-module.exports = router
-
-// const express = require('express')
-// const router = express.Router()
-
-
-// const { ChildAuth } = require('../controllers/Child.Auth')
-
-
-
-// router.post('/api/child', ChildAuth)
-
-
-// module.exports = router
-
+module.exports = router;
