@@ -1,61 +1,183 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
-const {signup, signin, validateOtp, sendOtp} = require('../controllers/auth')
-const { sendResetToken, resetPassword } = require('../controllers/changePassword')
+const { signup, signin, validateOtp, sendOtp, getAllUsers } = require('../controllers/auth');
+const { sendResetToken, resetPassword } = require('../controllers/changePassword');
+
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Book:
- *       type: object
- *       required:
- *         - title
- *         - author
- *         - finished
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the book
- *         title:
- *           type: string
- *           description: The title of your book
- *         author:
- *           type: string
- *           description: The book author
- *         finished:
- *           type: boolean
- *           description: Whether you have finished reading the book
- *         createdAt:
- *           type: string
- *           format: date
- *           description: The date the book was added
- *       example:
- *         id: d5fE_asz
- *         title: The New Turing Omnibus
- *         author: Alexander K. Dewdney
- *         finished: false
- *         createdAt: 2020-03-10T04:05:06.157Z
+ * /api/auth/forgot-password/send-reset-token:
+ *   post:
+ *     summary: Send a reset token for password reset.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Reset token sent successfully.
+ *       400:
+ *         description: Invalid email provided.
+ *       500:
+ *         description: Internal server error.
  */
+router.post('/forgot-password/send-reset-token', sendResetToken);
 
+/**
+ * @swagger
+ * /api/auth/forgot-password/reset-password:
+ *   post:
+ *     summary: Reset the user's password using the reset token.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resetToken:
+ *                 type: string
+ *                 example: "12345abcdreset"
+ *               newPassword:
+ *                 type: string
+ *                 example: "newSecurePassword123"
+ *     responses:
+ *       200:
+ *         description: Password reset successfully.
+ *       400:
+ *         description: Invalid token or new password.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/forgot-password/reset-password', resetPassword);
 
-// router.post('/', signup)
-// router.post('/login', signin)
-router.post('/send-reset-token', sendResetToken )
-router.post('/reset-password', resetPassword )
+/**
+ * @swagger
+ * /api/auth/validate:
+ *   post:
+ *     summary: Validate OTP for user authentication.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: OTP validated successfully.
+ *       400:
+ *         description: Invalid OTP or email.
+ *       500:
+ *         description: Internal server error.
+ */
 router.post('/validate', validateOtp);
-router.post('/send-otp', sendOtp);
 
+/**
+ * @swagger
+ * /api/auth/otp/send-otp:
+ *   post:
+ *     summary: Send an OTP to the user's email for validation.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully.
+ *       400:
+ *         description: Invalid email provided.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/otp/send-otp', sendOtp);
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User registered successfully.
+ *       400:
+ *         description: Invalid user data.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/register', signup);
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login an existing user.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: User logged in successfully.
+ *       400:
+ *         description: Invalid credentials.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/login', signin);
 
-router.post('/api/signup', signup)
-router.post('/api/signin', signin)
+/**
+ * @swagger
+ * /api/auth/all:
+ *   get:
+ *     summary: Get all registered users.
+ *     tags:
+ *       - Authentication
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all users.
+ *       500:
+ *         description: Internal server error.
+ */
+router.get('/all', getAllUsers);
 
-
-
-
-
-
-module.exports = router
+module.exports = router;

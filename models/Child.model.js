@@ -1,42 +1,14 @@
 const mongoose = require('mongoose')
 
 
-const childProfileSchema = new mongoose.Schema({
+const ChildSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  age: { type: Number, required: true },
+  hobbies: [String],
+  parent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to parent
+});
 
+const Child = mongoose.model('ChildProfile', ChildSchema);
 
-    name: String,
-    age: Number,
-    guardianId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    privacy: { type: String, enum: ['public', 'private'], default: 'private' },
-    achievements: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Achievement' }],
-    milestones: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Milestone' }],
-
-  },
-    {
-    timestamps: true
-    }
-
-);
-  
-  const ChildProfile = mongoose.model('ChildProfile', childProfileSchema);
-  module.exports = ChildProfile;
-// const mongoose = require('mongoose')
-
-
-// const childProfileSchema = new mongoose.Schema({
-
-
-//     name: String,
-//     age: Number,
-//     guardianId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//     privacy: { type: String, enum: ['private', 'public'], default: 'private' },
-
-//   },
-//     {
-//     timestamps: true
-//     }
-
-// );
-  
-//   const ChildProfile = mongoose.model('ChildProfile', childProfileSchema);
-//   module.exports = ChildProfile;
+module.exports = Child;

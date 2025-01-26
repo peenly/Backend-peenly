@@ -1,58 +1,3 @@
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         email:
- *           type: string
- *           example: user@example.com
- *         password:
- *           type: string
- *           example: "abc123"
- *         first_name:
- *           type: string
- *           example: John
- *         last_name:
- *           type: string
- *           example: Doe
- *         dateOfBirth:
- *           type: string
- *           format: date
- *           example: 1990-01-01
- *         otpCode:
- *           type: string
- *           example: "123456"
- *         resetToken:
- *           type: string
- *           example: "resetToken12345"
- *         resetTokenExpiration:
- *           type: string
- *           format: date-time
- *           example: "2025-01-01T12:00:00Z"
- *         mfaEnabled:
- *           type: boolean
- *           example: true
- *         children:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               _id:
- *                 type: string
- *                 example: "60f7b441bc13b12b73136c0f"
- *               first_name:
- *                 type: string
- *                 example: Jane
- *               last_name:
- *                 type: string
- *                 example: Doe
- *       required:
- *         - email
- *         - password
- */
- 
 
 const User  = require('../models/User.Model'); 
 const jwt = require('jsonwebtoken');
@@ -61,62 +6,10 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 
-/**
- * @swagger
- * /api/user/forgot-password/send-reset-token:
- *   post:
- *     summary: Send a password reset email to the user.
- *     tags:
- *       - user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: user@example.com
- *     responses:
- *       200:
- *         description: Password reset email sent successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Password reset email sent successfully
- *                 email:
- *                   type: string
- *                   example: user@example.com
- *       404:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: User not found
- *       500:
- *         description: Failed to send email or other server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to send email
- */
 
 const sendResetToken = async (req, res) => {
     const email = req.body.email;
-    console.log(`Looking for user with email: ${email}`);  // Debugging log
+    console.log(`Looking for user with email: ${email}`); 
 
     let user;
     try {
@@ -266,107 +159,45 @@ const generateResetToken = async (user) => {
 };
 // Todo: Generate a reset Expiration Token Method
 
-/**
- * @swagger
- * /api/user/forgot-password/reset-password:
- *   post:
- *     summary: Reset the user's password.
- *     tags:
- *       - user
- *     parameters:
- *       - in: query
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *         description: The email address of the user resetting the password.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               newPassword:
- *                 type: string
- *                 example: newPassword123
- *               confirmedPassword:
- *                 type: string
- *                 example: newPassword123
- *     responses:
- *       200:
- *         description: Password reset successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                   example: 1234567890abcdef
- *                 email:
- *                   type: string
- *                   example: user@example.com
- *       400:
- *         description: Bad request, e.g., passwords do not match.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Passwords do not match
- *       500:
- *         description: Failed to fetch user or other server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to fetch user
- */
 
 const resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
 
     let decoded;
     try {
-       
         // Verify token and decode it
         decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-        // Handle JWT-specific errors (expired token)
         if (error.name === 'TokenExpiredError') {
             return res.status(400).json({ error: 'Reset token has expired' });
         }
-        console.error('Error verifying token:', error);  // Log error for debugging
         return res.status(400).json({ error: 'Invalid or expired reset token' });
     }
 
-    // Verify user exists and token matches
+    // Verify user exists
     const user = await User.findById(decoded.userId);
     if (!user) {
-        return res.status(400).json({ error: 'User not found' });
+        return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check if the stored reset token matches the one in the request
-    console.log('Stored Reset Token:', user.resetToken); // Log stored reset token for debugging
+    // Check if the stored reset token matches
     if (user.resetToken !== token) {
         return res.status(400).json({ error: 'Invalid reset token' });
     }
 
-    // Check if the reset token has expired manually (additional safeguard)
+    // Check if the reset token has expired
     if (user.resetTokenExpiration < Date.now()) {
         return res.status(400).json({ error: 'Reset token has expired' });
     }
 
-    // Proceed with the password reset
-    user.password = newPassword; // Ensure proper hashing of the new password in your User model
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    // Clear reset token and expiration
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
+
     await user.save();
 
     res.status(200).json({ message: 'Password successfully reset' });

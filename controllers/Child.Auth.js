@@ -1,147 +1,82 @@
 // Create child profile
-const child = require('../models/Child.model');
+const ChildProfile = require('../models/Child.model');
+const User = require('../models/User.Model')
 
-const ChildAuth = async (req, res) => {
-    try {
-      const { name, age, privacy } = req.body;
-  
-      if (!name || !age || !privacy) {
-        return res.status(400).json({ message: 'Send all required fields: name, age, privacy' });
-      }
-  
-      const childProfile = new child({
-        name,
-        age,
-        privacy,
-        guardianId: req.user?.id,
-      });
-  
-      await User.findByIdAndUpdate(req.user.id, { $push: { children: childProfile._id } });
-      res.status(201).json({ message: 'Child profile created successfully', childProfile });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+// Add a child
+const addChild  = async (req, res) => {
+  try {
+    const { name, dateOfBirth, hobbies } = req.body;
+    const parentId = req.user.id; // Assume `req.user` is populated by authentication middleware
+
+    const child = new ChildProfile({ name, dateOfBirth, hobbies, parent: parentId });
+    await child.save();
+
+    // Update parent's child list
+    await User.findByIdAndUpdate(parentId, { $push: { children: child._id } });
+
+    res.status(201).json({ message: 'Child added successfully', child });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding child', error: error.message });
+  }
+};
+
+
+const updateChild = async (req, res) => {
+  try {
+    const { childId } = req.params;
+    const { name, dateOfBirth, hobbies } = req.body;
+
+    const child = await ChildProfile.findByIdAndUpdate(
+      childId,
+      { name, dateOfBirth, hobbies },
+      { new: true }
+    );
+
+    if (!child) {
+      return res.status(404).json({ message: 'Child not found' });
     }
 
+    res.status(200).json({ message: 'Child updated successfully', child });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating child', error: error.message });
   }
+};
+
+
+const deleteChild = async (req, res) => {
+  try {
+    const { childId } = req.params;
+
+    const child = await ChildProfile.findByIdAndDelete(childId);
+
+    if (!child) {
+      return res.status(404).json({ message: 'Child not found' });
+    }
+
+    // Remove the child from the parent's list
+    await User.findByIdAndUpdate(child.parent, { $pull: { children: childId } });
+
+    res.status(200).json({ message: 'Child deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting child', error: error.message });
+  }
+};
+
+const getChildren = async (req, res) => {
+  try {
+    const parentId = req.user.id;
+
+    const children = await ChildProfile.find({ parent: parentId });
+
+    res.status(200).json({ children });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching children', error: error.message });
+  }
+};
 
   module.exports = {
-    ChildAuth
-  };
-// // Create child profile
-// const child = require('../models/Child.model');
-
-// /**
-//  * @swagger
-//  * /api/child/create:
-//  *   post:
-//  *     summary: Create a child profile.
-//  *     tags:
-//  *       - child
-//  *     security:
-//  *       - bearerAuth: []  
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               name:
-//  *                 type: string
-//  *                 example: John Doe
-//  *               age:
-//  *                 type: integer
-//  *                 example: 8
-//  *               privacy:
-//  *                 type: string
-//  *                 enum:
-//  *                   - public
-//  *                   - private
-//  *                 example: private
-//  *     responses:
-//  *       201:
-//  *         description: Child profile created successfully.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Child profile created successfully
-//  *                 childProfile:
-//  *                   type: object
-//  *                   properties:
-//  *                     id:
-//  *                       type: string
-//  *                       example: 63c9e5b5f5a48e1c4e7e3d89
-//  *                     name:
-//  *                       type: string
-//  *                       example: John Doe
-//  *                     age:
-//  *                       type: integer
-//  *                       example: 8
-//  *                     privacy:
-//  *                       type: string
-//  *                       example: private
-//  *                     guardianId:
-//  *                       type: string
-//  *                       example: 62c9a5b4f4a58e2c3e6d2c90
-//  *       400:
-//  *         description: Missing required fields.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Send all required fields: name, age, privacy
-//  *       500:
-//  *         description: Internal server error.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: An error occurred while creating the child profile
-//  */
-
-// const ChildAuth = async (req, res) => {
-//   try {
-//       const { name, age, privacy } = req.body;
-
-//       // Logging the incoming data for debugging
-//       console.log('Received data:', { name, age, privacy });
-
-//       if (!name || !age || !privacy) {
-//           return res.status(400).json({ message: 'All fields are required: name, age, privacy' });
-//       }
-
-//       const childProfile = new child({
-//           name,
-//           age,
-//           privacy,
-//           guardianId: req.user?.id,
-//       });
-
-//       // Log the childProfile before saving it
-//       console.log('Child profile:', childProfile);
-
-//       await User.findByIdAndUpdate(req.user.id, { $push: { children: childProfile._id } });
-
-//       res.status(201).json({
-//           message: 'Child profile created successfully',
-//           childProfile,
-//       });
-//   } catch (error) {
-//       console.error('Error occurred:', error.message); // Log the error
-//       res.status(500).json({ message: error.message });
-//   }
-// };
-
-// module.exports = {
-//   ChildAuth,
-// };
+    getChildren,
+    deleteChild,
+    updateChild,
+    addChild
+    };

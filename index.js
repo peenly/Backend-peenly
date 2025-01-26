@@ -1,50 +1,52 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const { swaggerDocs, swaggerUi } = require('./swagger.js');
+const express = require('express')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+const {swaggerDocs, swaggerUi} = require('./swagger.js')
 dotenv.config();
-const userRouter = require('./routes/User.Routes.js');
-const ChildRouter = require('./routes/Child.Routes.js');
-const guardian = require('./routes/guardian.Routes.js');
-const privacy = require('./routes/guardian.Routes.js');
-const Achievement = require('./routes/Achievement.js');
-const Milestone = require('./routes/milestone.js');
-const dashboard = require('./routes/dashboard.js');
-const cors = require('cors');
-const app = express();
-
+const userRouter = require('./routes/User.Routes.js')
+const ChildRouter = require('./routes/Child.Routes.js')
+const guardianRouter = require('./routes/guardian')
+const privacyRouter = require('./routes/PrivacyRoutes.js')
+const AchievementRouter = require('./routes/AchievementRoutes.js')
+const milestoneRouter = require('./routes/MilestoneRoutes.js');
+const dashboardRouter = require('./routes/dashboardRoutes.js')
+const NotificationRouter = require('./routes/notificationRoutes.js')
+const cors = require('cors')
+const app = express()
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(express.urlencoded({extended: false}))
+app.use(cors())
 
-app.get('/', (req, res) => {
-    res.send('Welcome to Backend');
-});
 
-/**
- * @swagger
- * /api-docs:
- *   get:
- *     summary: Access the Swagger API documentation.
- *     tags:
- *       - Documentation
- */
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, { explorer: true }));
+app.get('/', (req, res)=>{
+    res.send("Welcome to Backend")
+})
 
-// Routes
-app.use('/api/user/forgot-password', userRouter);
-app.use('/api/user/otp', userRouter);
-app.use('/api/child', ChildRouter);
-app.put('/api/update', ChildRouter);
-app.delete('/api/delete', ChildRouter);
-app.post('/api/add', Achievement);
-app.put('/api/update', Achievement);
-app.delete('/api/delete', Achievement);
-app.post('/api/add-milestone', Milestone);
-app.post('/api/invite-guardian', guardian);
-app.delete('/api/delete-guardian', guardian);
-app.put('/api/privacy', privacy);
-app.get('/api/privacy-childId', privacy);
+app.use('/api-docs', swaggerUi.serve, 
+    swaggerUi.setup(swaggerDocs, {explorer: true})
+);
+
+
+app.use('/api/user', userRouter)
+app.use('/api/child', ChildRouter)
+app.use('/api/achievement', AchievementRouter)
+app.use('/api/milestone', milestoneRouter)
+app.use('/api/guardian', guardianRouter)
+app.use('/api/privacy', privacyRouter)
+app.use('/api/notification', NotificationRouter)
+app.use('/api/dashboard', dashboardRouter)
+
+
+
+             
+
+
+
+
+
+
+
+
 
 
 

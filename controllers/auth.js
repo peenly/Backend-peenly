@@ -1,122 +1,13 @@
 const usermod = require('../models/User.Model');
 const UserModel = require('../models/User.Model'); 
 const OtpModel = require('../models/OtpModel'); // Adjust the path according to your folder structure
+const jwt = require('jsonwebtoken');
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const otpStore = {}
 const Africastalking = require('africastalking');
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         email:
- *           type: string
- *           example: user@example.com
- *         password:
- *           type: string
- *           example: "abc123"
- *         first_name:
- *           type: string
- *           example: John
- *         last_name:
- *           type: string
- *           example: Doe
- *         dateOfBirth:
- *           type: string
- *           format: date
- *           example: 1990-01-01
- *         otpCode:
- *           type: string
- *           example: "123456"
- *         resetToken:
- *           type: string
- *           example: "resetToken12345"
- *         resetTokenExpiration:
- *           type: string
- *           format: date-time
- *           example: "2025-01-01T12:00:00Z"
- *         mfaEnabled:
- *           type: boolean
- *           example: true
- *         children:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               _id:
- *                 type: string
- *                 example: "60f7b441bc13b12b73136c0f"
- *               first_name:
- *                 type: string
- *                 example: Jane
- *               last_name:
- *                 type: string
- *                 example: Doe
- *       required:
- *         - email
- *         - password
- */
-
-/**
- * @swagger
- * /api/user/register/login:
- *   post:
- *     summary: login user.
- *     tags:
- *       - user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: user@example.com
- *               password:
- *                 type: string
- *                 example: "abc123"
- *     responses:
- *       200:
- *         description: Password reset email sent successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: 
- *                 email:
- *                   type: string
- *                   example: user@example.com
- *       404:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: 
- *       500:
- *         description: uanble to send in or other server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to send email
- */
 
 // User Signin Function
 const signin = async (req, res) => {
@@ -135,85 +26,23 @@ const signin = async (req, res) => {
             return res.status(401).json({ message: 'Password incorrect' });
         }
 
-        res.status(200).json({ message: 'Login successful' });
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id }, // Payload containing the user ID
+            process.env.JWT_SECRET, // Secret key for encoding the token
+            { expiresIn: '1h' } // Token expiration time (1 hour)
+        );
+
+        // Send response with the token
+        res.status(200).json({
+            message: 'Login successful',
+            token // Include the token in the response
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
-
-/**
- * @swagger
- * /api/user/otp/send-otp:
- *   post:
- *     summary: Send an OTP to the user's email or phone Number.
- *     tags:
- *       - user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: user@example.com
- *               phone:
- *                 type: string
- *                 example: "+23476567890"
- *               method:
- *                 type: string
- *                 enum:
- *                   - email
- *                   - sms
- *                 example: email
- *                 description: The method by which the OTP should be sent. Choose either 'email' or 'sms'.
- *     responses:
- *       200:
- *         description: OTP sent successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: OTP sent successfully via email
- *       400:
- *         description: Bad request, invalid or missing data.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Email or Phone Number is required, and method must be 'email' or 'sms'.
- *       404:
- *         description: User not found for the provided email or phone.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User not found
- *       500:
- *         description: Failed to send OTP or other server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Failed to send OTP
- *                 error:
- *                   type: string
- *                   example: Error details here
- */
 
 
 
@@ -278,74 +107,6 @@ const sendOtp = async (req, res) => {
 };
 
 
-/**
- * @swagger
- * /api/user/register:
- *   post:
- *     summary: Register a new user.
- *     tags:
- *       - user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               first_name:
- *                 type: string
- *                 example: John
- *               last_name:
- *                 type: string
- *                 example: Doe
- *               email:
- *                 type: string
- *                 example: user@example.com
- *               password:
- *                 type: string
- *                 example: "abc123"
- *     responses:
- *       200:
- *         description: User registered successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User registered successfully.
- *       400:
- *         description: Missing required fields or invalid data.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: All fields are required.
- *       409:
- *         description: Email already in use.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Email already in use.
- *       500:
- *         description: Server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Failed to register user.
- */
 
 // User Signup Function
 const signup = async (req, res) => {
@@ -412,65 +173,6 @@ const signup = async (req, res) => {
     }
 };
 
-/**
- * @swagger
- * /api/user/otp/validate:
- *   post:
- *     summary: validate user otp.
- *     tags:
- *       - user
- *     parameters:
- *       - in: query
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *         description: The email address of the user resetting the password.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               otp:
- *                 type: string
- *                 example: 000000
- *     responses:
- *       200:
- *         description: User registered successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: 
- *                 email:
- *                   type: string
- *                   example: User registered successfully
- *       404:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: 
- *       500:
- *         description: uanble to send in or other server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Failed to send email
- */
 
 
 // Validate OTP
@@ -531,11 +233,21 @@ const validateOtp = async (req, res) => {
 
 
 
-
-
+// Function to fetch all registered parents
+const getAllUsers = async (req, res) => {
+    try {
+        // Fetch all users from the database
+        const users = await UserModel.find({}, '_id first_name last_name email');
+        res.status(200).json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching users' });
+    }
+};
 module.exports = {
     signin,
     signup,
     validateOtp,
     sendOtp,
+    getAllUsers,
 };
