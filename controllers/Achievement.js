@@ -52,13 +52,27 @@ const updateAchievement = async (req, res) => {
 // Get all achievements (for a specific parent or child)
 const getAchievements = async (req, res) => {
   try {
-    const parentId = req.user.id; // Use authenticated user's ID as the parent
+    const { childId } = req.params;  // Retrieve childId from the URL parameters
 
-    const achievements = await Achievement.find({ parentId });
+    // Validate that the childId is present
+    if (!childId) {
+      return res.status(400).json({ message: 'Child ID is required' });
+    }
 
-    res.status(200).json({ achievements });
+    // Query achievements based on childId
+    const achievements = await Achievement.find({ childId });
+
+    if (!achievements || achievements.length === 0) {
+      return res.status(404).json({ message: 'No achievements found for this child' });
+    }
+
+    res.status(200).json({
+      message: 'Achievements fetched successfully.',
+      achievements,
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching achievements', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching achievements.', error: error.message });
   }
 };
 

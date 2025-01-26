@@ -4,7 +4,6 @@ const router = express.Router();
 const { signup, signin, validateOtp, sendOtp, getAllUsers } = require('../controllers/auth');
 const { sendResetToken, resetPassword } = require('../controllers/changePassword');
 
-
 /**
  * @swagger
  * /api/user/forgot-password/send-reset-token:
@@ -109,11 +108,16 @@ router.post('/validate', validateOtp);
  *               email:
  *                 type: string
  *                 example: "user@example.com"
+ *               method:
+ *                 type: string
+ *                 enum: ["email", "sms"]
+ *                 example: "email"
+ *         
  *     responses:
  *       200:
  *         description: OTP sent successfully.
  *       400:
- *         description: Invalid email provided.
+ *         description: Invalid email or phone number provided.
  *       500:
  *         description: Internal server error.
  */
@@ -131,7 +135,20 @@ router.post('/otp/send-otp', sendOtp);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *                 example: "John"
+ *               last_name:
+ *                 type: string
+ *                 example: "Doe"
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "SecurePassword123"
  *     responses:
  *       201:
  *         description: User registered successfully.
@@ -154,7 +171,14 @@ router.post('/register', signup);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "SecurePassword123"
  *     responses:
  *       200:
  *         description: User logged in successfully.

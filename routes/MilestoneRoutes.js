@@ -18,44 +18,59 @@ const { addMilestone, getMilestones, deleteMilestone } = require('../controllers
  *           schema:
  *             type: object
  *             properties:
- *               title:
- *                 type: string
- *                 example: "Complete Homework"
- *               description:
- *                 type: string
- *                 example: "Finish all math homework by end of the week."
- *               dueDate:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-02-01T12:00:00Z"
- *               reminder:
- *                 type: boolean
- *                 example: true
  *               childId:
  *                 type: string
- *                 example: "63c9e5b5f5a48e1c4e7e3d89"
+ *                 example: "6795691729abc283e5598348"
+ *               title:
+ *                 type: string
+ *                 example: "My Reading time"
+ *               description:
+ *                 type: string
+ *                 example: "My afternoon reading day"
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-30"  
+ *               reminder:
+ *                 type: object
+ *                 properties:
+ *                   enabled:
+ *                     type: boolean
+ *                     example: true
  *     responses:
  *       201:
  *         description: Milestone added successfully.
  *       400:
- *         description: Missing or invalid data in the request.
+ *         description: Missing or invalid data in the request (e.g., invalid date).
  *       500:
  *         description: Internal server error.
  */
+
+
 router.post('/add', addMilestone);
 
 /**
  * @swagger
  * /api/milestone/retrieve:
- *   get:
- *     summary: Retrieve all milestones.
+ *   post:
+ *     summary: Retrieve all milestones for a specific child.
  *     tags:
  *       - Milestone
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               childId:
+ *                 type: string
+ *                 example: "6795691729abc283e5598348"
  *     responses:
  *       200:
- *         description: List of all milestones.
+ *         description: List of all milestones for the child.
  *         content:
  *           application/json:
  *             schema:
@@ -65,24 +80,30 @@ router.post('/add', addMilestone);
  *                 properties:
  *                   title:
  *                     type: string
- *                     example: "Complete Homework"
+ *                     example: "My Reading time"
  *                   description:
  *                     type: string
- *                     example: "Finish all math homework by end of the week."
- *                   dueDate:
+ *                     example: "My afternoon reading day"
+ *                   date:
  *                     type: string
  *                     format: date-time
- *                     example: "2025-02-01T12:00:00Z"
+ *                     example: "2025-02-30"  
  *                   reminder:
- *                     type: boolean
- *                     example: true
+ *                     type: object
+ *                     properties:
+ *                       enabled:
+ *                         type: boolean
+ *                         example: true
  *                   childId:
  *                     type: string
- *                     example: "63c9e5b5f5a48e1c4e7e3d89"
+ *                     example: "6795691729abc283e5598348"
+ *       400:
+ *         description: Missing or invalid data (e.g., childId).
  *       500:
  *         description: Internal server error.
  */
-router.get('/retrieve', getMilestones);
+
+router.get('/retrieve/:childId', getMilestones);
 
 /**
  * @swagger

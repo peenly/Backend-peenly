@@ -15,6 +15,7 @@ const { getPrivacySettings, updatePrivacySettings } = require('../controllers/Pr
  *       - name: childId
  *         in: path
  *         required: true
+ *         description: The ID of the child whose privacy settings are to be fetched.
  *         schema:
  *           type: string
  *           example: "63c9e5b5f5a48e1c4e7e3d89"
@@ -29,11 +30,13 @@ const { getPrivacySettings, updatePrivacySettings } = require('../controllers/Pr
  *                 childId:
  *                   type: string
  *                   example: "63c9e5b5f5a48e1c4e7e3d89"
- *                 visibility:
- *                   type: string
- *                   enum: [public, private, custom]
- *                   example: "private"
- *                 shareProfileWithGuardian:
+ *                 canViewAchievements:
+ *                   type: boolean
+ *                   example: true
+ *                 canViewMilestone:
+ *                   type: boolean
+ *                   example: true
+ *                 canViewHobbies:
  *                   type: boolean
  *                   example: true
  *       404:
@@ -56,6 +59,7 @@ router.get('/privacy-settings/:childId', getPrivacySettings);
  *       - name: childId
  *         in: path
  *         required: true
+ *         description: The ID of the child whose privacy settings are to be updated.
  *         schema:
  *           type: string
  *           example: "63c9e5b5f5a48e1c4e7e3d89"
@@ -66,11 +70,13 @@ router.get('/privacy-settings/:childId', getPrivacySettings);
  *           schema:
  *             type: object
  *             properties:
- *               visibility:
- *                 type: string
- *                 enum: [public, private, custom]
- *                 example: "private"
- *               shareProfileWithGuardian:
+ *               canViewAchievements:
+ *                 type: boolean
+ *                 example: true
+ *               canViewMilestone:
+ *                 type: boolean
+ *                 example: true
+ *               canViewHobbies:
  *                 type: boolean
  *                 example: true
  *     responses:

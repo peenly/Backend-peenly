@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Achievement = require('../models/Achievement');
 const upload = require('../Middleware/multer'); 
+const { getAchievements } = require('../controllers/Achievement');
+
 
 /**
  * @swagger
@@ -319,83 +321,51 @@ router.post('/add', upload.single('media'), async (req, res) => {
 
 /**
  * @swagger
- * /api/achievement/retrieve:
+ * /api/achievements/retrieve/{childId}:
  *   get:
- *     summary: Retrieve achievements
- *     description: List or filter achievements by category and date.
- *     operationId: getAchievements
+ *     summary: Retrieve achievements for a specific child.
  *     tags:
  *       - Achievements
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: query
- *         name: category
- *         required: false
+ *       - name: childId
+ *         in: path
+ *         required: true
  *         schema:
  *           type: string
- *         description: Category filter for achievements
- *       - in: query
- *         name: dateFrom
- *         required: false
- *         schema:
- *           type: string
- *           format: date
- *         description: Start date for filtering achievements
- *       - in: query
- *         name: dateTo
- *         required: false
- *         schema:
- *           type: string
- *           format: date
- *         description: End date for filtering achievements
+ *           example: "6795691729abc283e5598348"
  *     responses:
  *       200:
- *         description: Achievements fetched successfully
+ *         description: List of achievements for the child.
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Achievements fetched successfully
- *                 achievements:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Achievement'
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   title:
+ *                     type: string
+ *                     example: "Completed Homework"
+ *                   description:
+ *                     type: string
+ *                     example: "Successfully finished all homework assignments."
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-02-01T12:00:00Z"
+ *                   childId:
+ *                     type: string
+ *                     example: "6795691729abc283e5598348"
+ *       400:
+ *         description: Invalid or missing childId.
+ *       404:
+ *         description: No achievements found for the child.
  *       500:
- *         description: Error fetching achievements
+ *         description: Internal server error.
  */
-
-router.get('/retrieve', async (req, res) => {
-    const { category, dateFrom, dateTo } = req.query;
-
-    try {
-      let query = {};
-
-      // Apply category filter if present
-      if (category) {
-        query.category = category;
-      }
-
-      // Apply date filter if present
-      if (dateFrom && dateTo) {
-        query.date = { $gte: new Date(dateFrom), $lte: new Date(dateTo) };
-      }
-
-      // Find achievements based on the query
-      const achievements = await Achievement.find(query);
-
-      res.status(200).json({
-        message: 'Achievements fetched successfully.',
-        achievements
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error fetching achievements.', error: error.message });
-    }
-});
-
-
+router.get('/retrieve/:childId', getAchievements);
 /**
  * @swagger
  * /api/achievement/update/{achievementId}:
