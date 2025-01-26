@@ -7,7 +7,7 @@ const { sendResetToken, resetPassword } = require('../controllers/changePassword
 
 /**
  * @swagger
- * /api/auth/forgot-password/send-reset-token:
+ * /api/user/forgot-password/send-reset-token:
  *   post:
  *     summary: Send a reset token for password reset.
  *     tags:
@@ -34,7 +34,7 @@ router.post('/forgot-password/send-reset-token', sendResetToken);
 
 /**
  * @swagger
- * /api/auth/forgot-password/reset-password:
+ * /api/user/forgot-password/reset-password:
  *   post:
  *     summary: Reset the user's password using the reset token.
  *     tags:
@@ -64,7 +64,7 @@ router.post('/forgot-password/reset-password', resetPassword);
 
 /**
  * @swagger
- * /api/auth/validate:
+ * /api/user/validate:
  *   post:
  *     summary: Validate OTP for user authentication.
  *     tags:
@@ -94,7 +94,7 @@ router.post('/validate', validateOtp);
 
 /**
  * @swagger
- * /api/auth/otp/send-otp:
+ * /api/user/otp/send-otp:
  *   post:
  *     summary: Send an OTP to the user's email for validation.
  *     tags:
@@ -121,7 +121,7 @@ router.post('/otp/send-otp', sendOtp);
 
 /**
  * @swagger
- * /api/auth/register:
+ * /api/user/register:
  *   post:
  *     summary: Register a new user.
  *     tags:
@@ -144,7 +144,7 @@ router.post('/register', signup);
 
 /**
  * @swagger
- * /api/auth/login:
+ * /api/user/login:
  *   post:
  *     summary: Login an existing user.
  *     tags:
@@ -167,7 +167,7 @@ router.post('/login', signin);
 
 /**
  * @swagger
- * /api/auth/all:
+ * /api/user/all:
  *   get:
  *     summary: Get all registered users.
  *     tags:
