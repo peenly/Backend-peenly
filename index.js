@@ -18,6 +18,15 @@ app.use(express.urlencoded({extended: false}))
 app.use(cors({origin: "http://localhost:3000"}))
 
 
+const corsOptions = {
+    origin: 'http://localhost:3000', // Allow localhost:3000 only
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // If your requests include credentials like cookies
+};
+
+app.use(cors(corsOptions));
+
+
 app.get('/', (req, res)=>{
     res.send("Welcome to Backend")
 })
