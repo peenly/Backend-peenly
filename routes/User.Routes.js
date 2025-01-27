@@ -33,7 +33,7 @@ router.post('/forgot-password/send-reset-token', sendResetToken);
 
 /**
  * @swagger
- * /api/user/forgot-password/reset-password:
+ * /api/user/forgot-password/reset-password/{:token}:
  *   post:
  *     summary: Reset the user's password using the reset token.
  *     tags:
@@ -45,9 +45,6 @@ router.post('/forgot-password/send-reset-token', sendResetToken);
  *           schema:
  *             type: object
  *             properties:
- *               resetToken:
- *                 type: string
- *                 example: "12345abcdreset"
  *               newPassword:
  *                 type: string
  *                 example: "newSecurePassword123"
@@ -59,7 +56,7 @@ router.post('/forgot-password/send-reset-token', sendResetToken);
  *       500:
  *         description: Internal server error.
  */
-router.post('/forgot-password/reset-password', resetPassword);
+router.post('/forgot-password/reset-password/:token', resetPassword);
 
 /**
  * @swagger
