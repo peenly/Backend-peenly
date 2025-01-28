@@ -19,9 +19,17 @@ app.use(express.urlencoded({extended: false}))
 
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://peenly-two.vercel.app'], 
+    origin: function (origin, callback) {
+        const allowedOrigins = ['http://localhost:3000', 'https://peenly-two.vercel.app'];
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, // If your requests include credentials like cookies
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
