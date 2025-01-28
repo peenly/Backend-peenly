@@ -30,9 +30,11 @@ const sendResetToken = async (req, res) => {
 
         const resetToken = await generateResetToken(user);
 
-        const resetLink = `${process.env.RESET_BASE_URL}/${resetToken}`;
-        const emailHtml = `
-            <!DOCTYPE html>
+        // Update reset link to point to the frontend
+        const resetLink = `https://peenly-two.vercel.app/reset-password/new-password?token=${resetToken}`;
+        
+        const emailHtml = 
+            `<!DOCTYPE html>
             <html>
             <head>
                 <style>
@@ -73,6 +75,7 @@ const sendResetToken = async (req, res) => {
         res.status(500).json({ error: 'Failed to send email' });
     }
 };
+
 
 // Reset Password
 const resetPassword = async (req, res) => {
