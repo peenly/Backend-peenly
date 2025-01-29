@@ -290,6 +290,11 @@ router.post('/add', upload.single('media'), async (req, res) => {
   const { title, description, category, parentId, childId } = req.body;
   let mediaUrl = null;
 
+  // Check if any required field is missing
+  if (!title || !description || !category || !parentId || !childId) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
   // Check if media is uploaded
   if (req.file) {
     mediaUrl = req.file.path; // Store the media file path (can be changed to a cloud URL if using Cloudinary)
@@ -414,39 +419,41 @@ router.get('/retrieve/:childId', getAchievements);
  *         description: Error updating achievement
  */
 router.put('/update/:achievementId', upload.single('media'), async (req, res) => {
-    const { achievementId } = req.params;
-    const { title, description, category } = req.body;
-    let mediaUrl = null;
+  const { achievementId } = req.params;
+  const { title, description, category } = req.body;
+  let mediaUrl = req.file ? req.file.path : null;
 
-    if (req.file) {
-      mediaUrl = req.file.path;
-    }
+  // Check if all required fields are provided
+  if (!title || !description || !category) {
+      return res.status(400).json({ message: 'All fields are required.' });
+  }
 
-    try {
+  try {
       // Find the achievement by its ID
       const achievement = await Achievement.findById(achievementId);
 
       if (!achievement) {
-        return res.status(404).json({ message: 'Achievement not found.' });
+          return res.status(404).json({ message: 'Achievement not found.' });
       }
 
       // Update the achievement details
-      achievement.title = title || achievement.title;
-      achievement.description = description || achievement.description;
-      achievement.category = category || achievement.category;
+      achievement.title = title;
+      achievement.description = description;
+      achievement.category = category;
       achievement.media = mediaUrl || achievement.media;
 
       // Save the updated achievement
       const updatedAchievement = await achievement.save();
 
       res.status(200).json({
-        message: 'Achievement updated successfully.',
-        achievement: updatedAchievement
+          message: 'Achievement updated successfully.',
+          achievement: updatedAchievement
       });
-    } catch (error) {
+  } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error updating achievement.', error: error.message });
-    }
+  }
 });
+
 
 module.exports = router;  

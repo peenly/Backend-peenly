@@ -162,38 +162,43 @@ router.post('/add-child', async (req, res) => {
 
 // update a child
 router.put('/update-child/:childId', async (req, res) => {
-    const { firstName, lastName, age, hobbies } = req.body;
-    const { childId } = req.params;
-  
-    try {
+  const { firstName, lastName, age, hobbies } = req.body;
+  const { childId } = req.params;
+
+  // Check if all fields are provided
+  if (!firstName || !lastName || !age || !hobbies) {
+      return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  try {
       // Find the child by its ID
       const child = await Child.findById(childId);
-  
+
       if (!child) {
-        return res.status(404).json({ message: 'Child not found.' });
+          return res.status(404).json({ message: 'Child not found.' });
       }
-  
+
       // Update child profile
-      child.firstName = firstName || child.firstName;
-      child.lastName = lastName || child.lastName;
-      child.age = age || child.age;
-      child.hobbies = hobbies || child.hobbies;
-  
+      child.firstName = firstName;
+      child.lastName = lastName;
+      child.age = age;
+      child.hobbies = hobbies;
+
       // Save the updated child profile
       const updatedChild = await child.save();
-  
+
       res.status(200).json({
-        message: 'Child profile updated successfully.',
-        child: updatedChild,
+          message: 'Child profile updated successfully.',
+          child: updatedChild,
       });
-    } catch (error) {
+  } catch (error) {
       console.error(error);
       res.status(500).json({
-        message: 'Error updating child profile.',
-        error: error.message,
+          message: 'Error updating child profile.',
+          error: error.message,
       });
-    }
-  });
+  }
+});
 
 /**
  * @swagger
@@ -258,7 +263,7 @@ router.delete('/delete-child/:childId', async (req, res) => {
 
 /**
  * @swagger
- * /api/child/list:
+ * /api/child/list/{parentId}:
  *   get:
  *     summary: Get all children of a parent.
  *     tags:
@@ -297,6 +302,22 @@ router.delete('/delete-child/:childId', async (req, res) => {
  */
 
 // Get all children of a parent
-router.get('/list', authenticate, getChildren);
+router.get('/list/:parentId', async (req, res) => {
+  try {
+      const { parentId } = req.params; // Get parentId from request params
+
+      // Find children belonging to the specified parentId
+      const children = await Child.find({ parent: parentId });
+
+      // If no children found
+      if (children.length === 0) {
+          return res.status(404).json({ message: 'No children found for this parent.' });
+      }
+
+      res.status(200).json({ children });
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching children', error: error.message });
+  }
+});
 
 module.exports = router;
